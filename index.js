@@ -1,46 +1,55 @@
-require("dotenv").config();
+// dotenv ONLY for local development
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
-const swaggerUi = require("swagger-ui-express");
-const swaggerSpec = require("./docs/swagger");
+const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
+
+// Load config ONCE
+const config = require('./config/index.config');
+
+// 🔍 hard proof log (keep this!)
 console.log('BOOT ENV CHECK:', {
-  MONGO_URI: process.env.MONGO_URI,
-  HAS_LONG_TOKEN: !!process.env.LONG_TOKEN_SECRET,
-  NODE_ENV: process.env.NODE_ENV,
+  MONGO_URI: config.MONGO_URI,
+  HAS_LONG_TOKEN: !!config.LONG_TOKEN_SECRET,
+  NODE_ENV: config.ENV,
 });
 
-require("./config/index.config");
+// Connect Mongo ONCE
+const connectMongo = require('./connect/mongo');
+connectMongo({ uri: config.MONGO_URI });
 
-const connectMongo = require('./connect/mongo')();
-connectMongo({
-  uri: process.env.MONGO_URI
-});
-
-const bootstrapAdmin = require("./bootstrap/admin.bootstrap");
+// Bootstrap admin AFTER DB
+const bootstrapAdmin = require('./bootstrap/admin.bootstrap');
 (async () => {
   await bootstrapAdmin();
+  console.log('✅ Master admin verified');
 })();
 
-require("./loaders/MongoLoader");
-require("./loaders/MiddlewaresLoader");
+// Load infrastructure
+require('./loaders/MongoLoader');
+require('./loaders/MiddlewaresLoader');
 
-const express = require("express");
 const app = express();
 app.use(express.json());
 
-const ManagersLoader = require("./loaders/ManagersLoader");
+// Load managers
+const ManagersLoader = require('./loaders/ManagersLoader');
 const managers = new ManagersLoader({}).load();
 
-// Load APIs
-const AuthApi = require("./managers/api/Auth.api");
-const SchoolApi = require("./managers/api/School.api");
-const ClassroomApi = require("./managers/api/Classroom.api");
-const StudentApi = require("./managers/api/Student.api");
+// APIs
+const AuthApi = require('./managers/api/Auth.api');
+const SchoolApi = require('./managers/api/School.api');
+const ClassroomApi = require('./managers/api/Classroom.api');
+const StudentApi = require('./managers/api/Student.api');
 
 const apis = [
+  AuthApi({ managers }),
   SchoolApi({ managers }),
   ClassroomApi({ managers }),
   StudentApi({ managers }),
-  AuthApi({ managers })
 ];
 
 // Mount routes
@@ -55,7 +64,7 @@ apis.forEach((api) => {
             res,
             body: req.body,
             params: req.params,
-            user: req.user
+            user: req.user,
           },
           next
         )
@@ -67,7 +76,7 @@ apis.forEach((api) => {
             res,
             body: req.body,
             params: req.params,
-            user: req.user
+            user: req.user,
           });
           res.json(result);
         } catch (err) {
@@ -78,10 +87,10 @@ apis.forEach((api) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+// Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+// Start server
+app.listen(config.USER_PORT, () => {
+  console.log(`🚀 Server running on port ${config.USER_PORT}`);
 });

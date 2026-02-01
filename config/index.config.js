@@ -1,77 +1,44 @@
-require('dotenv').config();
+const os = require('os');
+const pjson = require('../package.json');
+const utils = require('../libs/utils');
 
-const os     = require('os');
-const pjson  = require('../package.json');
-const utils  = require('../libs/utils');
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const SERVICE_NAME = process.env.SERVICE_NAME
   ? utils.slugify(process.env.SERVICE_NAME)
   : pjson.name;
 
-const USER_PORT  = process.env.USER_PORT || 5111;
-const ADMIN_PORT = process.env.ADMIN_PORT || 5222;
-const ADMIN_URL  = process.env.ADMIN_URL || `http://localhost:${ADMIN_PORT}`;
-const ENV = process.env.NODE_ENV || "development";
+const USER_PORT = process.env.PORT || process.env.USER_PORT || 3000;
+const ENV = process.env.NODE_ENV || 'development';
 
-const REDIS_URI  = process.env.REDIS_URI || 'redis://127.0.0.1:6379';
-
-const CORTEX_REDIS  = process.env.CORTEX_REDIS || REDIS_URI;
-const CORTEX_PREFIX = process.env.CORTEX_PREFIX || 'none';
-const CORTEX_TYPE   = process.env.CORTEX_TYPE || SERVICE_NAME;
-
-const OYSTER_REDIS  = process.env.OYSTER_REDIS || REDIS_URI;
-const OYSTER_PREFIX = process.env.OYSTER_PREFIX || 'none';
-
-const CACHE_REDIS  = process.env.CACHE_REDIS || REDIS_URI;
-const CACHE_PREFIX = process.env.CACHE_PREFIX || `${SERVICE_NAME}:ch`;
-
-const MONGO_URI = process.env.MONGO_URI || `mongodb://localhost:27017/${SERVICE_NAME}`;
-
-const config = require(`./envs/${ENV}.js`);
-
-/**
- * Secrets
- * Support Railway + local envs
- */
-const LONG_TOKEN_SECRET =
-  process.env.LONG_TOKEN_SECRET ||
-  process.env.JWT_SECRET ||
-  null;
-
+const MONGO_URI = process.env.MONGO_URI;
+const LONG_TOKEN_SECRET = process.env.LONG_TOKEN_SECRET;
 const SHORT_TOKEN_SECRET = process.env.SHORT_TOKEN_SECRET || null;
-const NACL_SECRET       = process.env.NACL_SECRET || null;
+const NACL_SECRET = process.env.NACL_SECRET || null;
 
-/**
- * Environment-aware validation
- * Never hard-crash during container bootstrap
- */
-const isRailway = !!process.env.RAILWAY_ENVIRONMENT;
+// 🔍 hard proof log
+console.log('BOOT ENV CHECK:', {
+  MONGO_URI,
+  HAS_LONG_TOKEN: !!LONG_TOKEN_SECRET,
+  NODE_ENV: ENV,
+});
 
-if (!LONG_TOKEN_SECRET) {
-  if (isRailway) {
-    console.warn('⚠️  LONG_TOKEN_SECRET not available at boot (Railway runtime injection expected)');
-  } else {
-    throw new Error('LONG_TOKEN_SECRET is required');
-  }
+if (!MONGO_URI) {
+  throw new Error('MONGO_URI is required');
 }
 
-config.dotEnv = {
+if (!LONG_TOKEN_SECRET) {
+  throw new Error('LONG_TOKEN_SECRET is required');
+}
+
+module.exports = {
   SERVICE_NAME,
   ENV,
-  CORTEX_REDIS,
-  CORTEX_PREFIX,
-  CORTEX_TYPE,
-  OYSTER_REDIS,
-  OYSTER_PREFIX,
-  CACHE_REDIS,
-  CACHE_PREFIX,
-  MONGO_URI,
   USER_PORT,
-  ADMIN_PORT,
-  ADMIN_URL,
+  MONGO_URI,
   LONG_TOKEN_SECRET,
   SHORT_TOKEN_SECRET,
   NACL_SECRET,
 };
-
-module.exports = config;

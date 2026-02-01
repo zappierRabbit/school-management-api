@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-module.exports = () => {
-  const uri = process.env.MONGO_URI;
-
+module.exports = ({ uri }) => {
   if (!uri) {
     throw new Error('MONGO_URI is required');
   }
@@ -14,6 +12,6 @@ module.exports = () => {
   });
 
   mongoose.connection.on('error', (err) => {
-    console.error('💾 MongoDB connection error:', err.message);
+    console.error('❌ MongoDB error:', err);
   });
 };
