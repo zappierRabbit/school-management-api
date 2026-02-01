@@ -11,6 +11,10 @@ module.exports = swaggerJsdoc({
     },
     servers: [
       {
+        url: "http://167.172.124.213:3000",
+        description: "Production server"
+      },
+      {
         url: "http://localhost:3000",
         description: "Local server"
       }
