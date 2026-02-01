@@ -2,12 +2,6 @@ const express = require('express');
 
 const cors = require("cors");
 
-app.use(cors({
-  origin: "*",   // ok for assessment / internal API
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
@@ -39,6 +33,12 @@ require('./loaders/MiddlewaresLoader');
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+  origin: "*",   // ok for assessment / internal API
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 // Load managers
 const ManagersLoader = require('./loaders/ManagersLoader');
