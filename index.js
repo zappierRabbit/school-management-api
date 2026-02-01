@@ -2,6 +2,11 @@ require("dotenv").config();
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./docs/swagger");
+console.log('BOOT ENV CHECK:', {
+  MONGO_URI: process.env.MONGO_URI,
+  HAS_LONG_TOKEN: !!process.env.LONG_TOKEN_SECRET,
+  NODE_ENV: process.env.NODE_ENV,
+});
 
 require("./config/index.config");
 
