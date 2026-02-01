@@ -1,0 +1,47 @@
+paths:
+  /students:
+    post:
+      tags: [Students]
+      summary: Enroll student
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Student"
+      responses:
+        200:
+          description: Student enrolled
+
+    get:
+      tags: [Students]
+      summary: List students
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: List of students
+
+  /students/transfer:
+    post:
+      tags: [Students]
+      summary: Transfer student to another classroom
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - student_id
+                - to_classroom_id
+              properties:
+                student_id:
+                  type: string
+                to_classroom_id:
+                  type: string
+      responses:
+        200:
+          description: Student transferred

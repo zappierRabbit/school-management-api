@@ -1,0 +1,39 @@
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    School:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        contact_email:
+          type: string
+
+    Classroom:
+      type: object
+      properties:
+        name:
+          type: string
+        capacity:
+          type: number
+        resources:
+          type: array
+          items:
+            type: string
+
+    Student:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string

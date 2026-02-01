@@ -1,0 +1,38 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Coverage
+coverage/
+
+# Build / temp
+dist/
+build/
+.tmp/
+.cache/
+
+# Docker
+*.pid
+
+# IDE
+.vscode/
+.idea/
+
+# Swagger generated files (if any)
+swagger-output.json
+
+# Mongo
+data/

@@ -1,0 +1,45 @@
+tags:
+  - name: Auth
+    description: Authentication endpoints
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login and receive JWT token
+      description: |
+        Logs in a user using email and password and returns a JWT.
+        - SUPERADMIN is bootstrapped via environment variables
+        - SCHOOL_ADMIN users are pre-created per school
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: admin@system.com
+                password:
+                  type: string
+                  example: SuperSecret123!
+
+      responses:
+        200:
+          description: JWT token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+        401:
+          description: Invalid credentials

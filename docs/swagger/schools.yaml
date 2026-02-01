@@ -1,0 +1,41 @@
+paths:
+  /schools:
+    post:
+      tags: [Schools]
+      summary: Create a school (SUPERADMIN)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/School"
+      responses:
+        200:
+          description: School created
+
+    get:
+      tags: [Schools]
+      summary: List all schools
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: List of schools
+
+  /schools/{id}:
+    get:
+      tags: [Schools]
+      summary: Get a school by ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: School details

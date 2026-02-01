@@ -1,0 +1,24 @@
+paths:
+  /classrooms:
+    post:
+      tags: [Classrooms]
+      summary: Create classroom (SCHOOL_ADMIN)
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Classroom"
+      responses:
+        200:
+          description: Classroom created
+
+    get:
+      tags: [Classrooms]
+      summary: List classrooms for school
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: List of classrooms
