@@ -5,7 +5,7 @@ const swaggerSpec = require("./docs/swagger");
 
 require("./config/index.config");
 
-const connectMongo = require("./connect/mongo");
+const connectMongo = require('./connect/mongo')();
 connectMongo({
   uri: process.env.MONGO_URI
 });
