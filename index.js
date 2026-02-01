@@ -1,8 +1,3 @@
-// dotenv ONLY for local development
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
-
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
@@ -18,8 +13,9 @@ console.log('BOOT ENV CHECK:', {
 });
 
 // Connect Mongo ONCE
-const connectMongo = require('./connect/mongo');
-connectMongo({ uri: config.MONGO_URI });
+const connectMongo = require("./connect/mongo")({
+  uri: process.env.MONGO_URI,
+});
 
 // Bootstrap admin AFTER DB
 const bootstrapAdmin = require('./bootstrap/admin.bootstrap');

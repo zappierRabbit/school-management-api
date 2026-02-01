@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: school-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo123
+
+  api:
+    build: .
+    container_name: school-api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+
+      # Mongo
+      MONGO_URI: mongodb://mongo:mongo123@mongo:27017/school_management?authSource=admin
+
+      # Auth
+      LONG_TOKEN_SECRET: supersecretjwtkey
+      SHORT_TOKEN_SECRET: short-secret-key
+      NACL_SECRET: nacl-secret-key
+
+      # Bootstrap admin
+      MASTER_ADMIN_EMAIL: admin@system.com
+      MASTER_ADMIN_PASSWORD: SuperSecret123!
+
+volumes:
+  mongo_data:
